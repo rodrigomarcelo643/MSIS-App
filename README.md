@@ -14,10 +14,6 @@
   <img src="https://img.shields.io/badge/Context%20API-React-61DAFB?style=for-the-badge&logo=react&logoColor=white" alt="Context API" />
 </div>
 
-<!-- Project Images -->
-<div align="center" style="display: flex; justify-content: center; align-items: center; gap: 15px; margin: 30px 0 40px 0;">
-  <img src="/mockup1.png" alt="ARDMS App" style="width: 200px; height: 350px; object-fit: contain; border-radius: 10px; box-shadow: 0 4px 8px rgba(0,0,0,0.1);" />
-</div>
 
 **ARDMS** (Academic Records and Document Management System) is a comprehensive mobile application designed for students to upload academic requirements, view evaluation results history, and manage their educational journey. This first version release focuses on streamlined document submission, evaluation tracking, and essential academic tools with AI assistance and real-time communication features.
 
