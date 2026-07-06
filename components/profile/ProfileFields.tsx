@@ -1,11 +1,49 @@
-import React, { useState, useEffect, useCallback } from 'react';
-import { View, Text, TouchableOpacity, TextInput, KeyboardTypeOptions } from 'react-native';
-import { User, Mars, Venus, Globe, ChevronDown, ChevronUp } from 'lucide-react-native';
-import { SectionProps, NationalityInputProps, EditData, InfoItemProps } from '@/@types/tabs';
+import {
+  EditData,
+  InfoItemProps,
+  NationalityInputProps,
+  SectionProps,
+} from "@/@types/tabs";
+import {
+  ChevronDown,
+  ChevronUp,
+  Globe,
+  Mars,
+  User,
+  Venus,
+} from "lucide-react-native";
+import React, { useEffect, useState } from "react";
+import {
+  KeyboardTypeOptions,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
+} from "react-native";
 
 // Reusable Section Component
-export const Section: React.FC<SectionProps> = ({ title, icon: Icon, children, isExpanded, onToggle, cardColor, textColor }) => (
-  <View style={{ backgroundColor: cardColor, borderRadius: 12, padding: 20, marginBottom: 16, shadowColor: '#000', shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.1, shadowRadius: 2, elevation: 2 }}>
+export const Section: React.FC<SectionProps> = ({
+  title,
+  icon: Icon,
+  children,
+  isExpanded,
+  onToggle,
+  cardColor,
+  textColor,
+}) => (
+  <View
+    style={{
+      backgroundColor: cardColor,
+      borderRadius: 12,
+      padding: 20,
+      marginBottom: 16,
+      shadowColor: "#000",
+      shadowOffset: { width: 0, height: 1 },
+      shadowOpacity: 0.1,
+      shadowRadius: 2,
+      elevation: 2,
+    }}
+  >
     <TouchableOpacity
       className="flex-row items-center justify-between mb-4"
       onPress={onToggle}
@@ -15,7 +53,9 @@ export const Section: React.FC<SectionProps> = ({ title, icon: Icon, children, i
         <View className="w-10 h-10 bg-blue-100 rounded-lg items-center justify-center mr-3">
           <Icon size={20} color="#8C2323" />
         </View>
-        <Text style={{ fontSize: 18, fontWeight: '600', color: textColor }}>{title}</Text>
+        <Text style={{ fontSize: 18, fontWeight: "600", color: textColor }}>
+          {title}
+        </Text>
       </View>
       {isExpanded ? (
         <ChevronUp size={20} color="#6b7280" />
@@ -29,15 +69,47 @@ export const Section: React.FC<SectionProps> = ({ title, icon: Icon, children, i
 );
 
 // Info Item Component
-export const InfoItem: React.FC<InfoItemProps> = ({ icon: Icon, label, value, theme, borderColor, mutedColor, textColor }) => (
-  <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingVertical: 12, borderBottomWidth: 1, borderBottomColor: borderColor }}>
+export const InfoItem: React.FC<InfoItemProps> = ({
+  icon: Icon,
+  label,
+  value,
+  theme,
+  borderColor,
+  mutedColor,
+  textColor,
+}) => (
+  <View
+    style={{
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "space-between",
+      paddingVertical: 12,
+      borderBottomWidth: 1,
+      borderBottomColor: borderColor,
+    }}
+  >
     <View className="flex-row items-center flex-1">
-      <View style={{ width: 32, height: 32, backgroundColor: '#f3f4f6', borderRadius: 8, alignItems: 'center', justifyContent: 'center', marginRight: 12 }}>
+      <View
+        style={{
+          width: 32,
+          height: 32,
+          backgroundColor: "#f3f4f6",
+          borderRadius: 8,
+          alignItems: "center",
+          justifyContent: "center",
+          marginRight: 12,
+        }}
+      >
         <Icon size={16} color="#8C2323" />
       </View>
       <View className="flex-1">
-        <Text style={{ color: mutedColor, fontSize: 13, marginBottom: 4 }}>{label}</Text>
-        <Text style={{ color: textColor, fontWeight: '500', fontSize: 13 }} numberOfLines={2}>
+        <Text style={{ color: mutedColor, fontSize: 13, marginBottom: 4 }}>
+          {label}
+        </Text>
+        <Text
+          style={{ color: textColor, fontWeight: "500", fontSize: 13 }}
+          numberOfLines={2}
+        >
           {value || "Not provided"}
         </Text>
       </View>
@@ -46,20 +118,20 @@ export const InfoItem: React.FC<InfoItemProps> = ({ icon: Icon, label, value, th
 );
 
 // Editable Field Component
-export const EditableField = ({ 
-  icon: Icon, 
-  label, 
-  value, 
-  field, 
-  isEditing, 
-  theme, 
-  borderColor, 
-  mutedColor, 
-  textColor, 
-  inputRef, 
-  keyboardType = 'default', 
-  autoCapitalize = 'none',
-  onValueChange
+export const EditableField = ({
+  icon: Icon,
+  label,
+  value,
+  field,
+  isEditing,
+  theme,
+  borderColor,
+  mutedColor,
+  textColor,
+  inputRef,
+  keyboardType = "default",
+  autoCapitalize = "none",
+  onValueChange,
 }: {
   icon: React.ComponentType<{ size: number; color: string }>;
   label: string;
@@ -72,14 +144,14 @@ export const EditableField = ({
   textColor: string;
   inputRef?: React.RefObject<TextInput | null>;
   keyboardType?: KeyboardTypeOptions;
-  autoCapitalize?: 'none' | 'sentences' | 'words' | 'characters';
+  autoCapitalize?: "none" | "sentences" | "words" | "characters";
   onValueChange: (field: keyof EditData, text: string) => void;
 }) => {
-  const [localValue, setLocalValue] = useState(value || '');
-  
+  const [localValue, setLocalValue] = useState(value || "");
+
   useEffect(() => {
     if (!isEditing) {
-      setLocalValue(value || '');
+      setLocalValue(value || "");
     }
   }, [value, isEditing]);
 
@@ -91,17 +163,47 @@ export const EditableField = ({
   };
 
   return (
-    <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingVertical: 12, borderBottomWidth: 1, borderBottomColor: borderColor }}>
+    <View
+      style={{
+        flexDirection: "row",
+        alignItems: "center",
+        justifyContent: "space-between",
+        paddingVertical: 12,
+        borderBottomWidth: 1,
+        borderBottomColor: borderColor,
+      }}
+    >
       <View className="flex-row items-center flex-1">
-        <View style={{ width: 32, height: 32, backgroundColor: '#f3f4f6', borderRadius: 8, alignItems: 'center', justifyContent: 'center', marginRight: 12 }}>
+        <View
+          style={{
+            width: 32,
+            height: 32,
+            backgroundColor: "#f3f4f6",
+            borderRadius: 8,
+            alignItems: "center",
+            justifyContent: "center",
+            marginRight: 12,
+          }}
+        >
           <Icon size={16} color="#8C2323" />
         </View>
         <View className="flex-1">
-          <Text style={{ color: mutedColor, fontSize: 14, marginBottom: 4 }}>{label}</Text>
+          <Text style={{ color: mutedColor, fontSize: 14, marginBottom: 4 }}>
+            {label}
+          </Text>
           {isEditing ? (
             <TextInput
               ref={inputRef}
-              style={{ color: textColor, fontWeight: '500', fontSize: 16, backgroundColor: theme === 'dark' ? '#374151' : '#ffffff', padding: 8, borderRadius: 8, borderWidth: 1, borderColor: borderColor }}
+              style={{
+                color: textColor,
+                fontWeight: "500",
+                fontSize: 16,
+                backgroundColor: theme === "dark" ? "#374151" : "#ffffff",
+                padding: 8,
+                borderRadius: 8,
+                borderWidth: 1,
+                borderColor: borderColor,
+              }}
               value={localValue}
               onChangeText={handleChange}
               placeholder={`Enter ${label.toLowerCase()}`}
@@ -109,11 +211,14 @@ export const EditableField = ({
               autoCapitalize={autoCapitalize}
               autoCorrect={false}
               keyboardType={keyboardType}
-              returnKeyType={field === 'contact_number' ? 'done' : 'next'}
-              blurOnSubmit={field === 'contact_number'}
+              returnKeyType={field === "contact_number" ? "done" : "next"}
+              blurOnSubmit={field === "contact_number"}
             />
           ) : (
-            <Text style={{ color: textColor, fontWeight: '500', fontSize: 16 }} numberOfLines={2}>
+            <Text
+              style={{ color: textColor, fontWeight: "500", fontSize: 16 }}
+              numberOfLines={2}
+            >
               {value || "Not provided"}
             </Text>
           )}
@@ -124,7 +229,17 @@ export const EditableField = ({
 };
 
 // Gender Input Component
-export const GenderInput = ({ value, label, isEditing, theme, borderColor, mutedColor, textColor, cardColor, onGenderChange }: {
+export const GenderInput = ({
+  value,
+  label,
+  isEditing,
+  theme,
+  borderColor,
+  mutedColor,
+  textColor,
+  cardColor,
+  onGenderChange,
+}: {
   value?: string;
   label: string;
   isEditing: boolean;
@@ -135,11 +250,11 @@ export const GenderInput = ({ value, label, isEditing, theme, borderColor, muted
   cardColor: string;
   onGenderChange: (gender: string) => void;
 }) => {
-  const [selectedGender, setSelectedGender] = useState(value || '');
-  
+  const [selectedGender, setSelectedGender] = useState(value || "");
+
   useEffect(() => {
     if (!isEditing) {
-      setSelectedGender(value || '');
+      setSelectedGender(value || "");
     }
   }, [value, isEditing]);
 
@@ -155,15 +270,44 @@ export const GenderInput = ({ value, label, isEditing, theme, borderColor, muted
   };
 
   return (
-    <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingVertical: 12, borderBottomWidth: 1, borderBottomColor: borderColor }}>
+    <View
+      style={{
+        flexDirection: "row",
+        alignItems: "center",
+        justifyContent: "space-between",
+        paddingVertical: 12,
+        borderBottomWidth: 1,
+        borderBottomColor: borderColor,
+      }}
+    >
       <View className="flex-row items-center flex-1">
-        <View style={{ width: 32, height: 32, backgroundColor: theme === 'dark' ? '#374151' : '#f3f4f6', borderRadius: 8, alignItems: 'center', justifyContent: 'center', marginRight: 12 }}>
+        <View
+          style={{
+            width: 32,
+            height: 32,
+            backgroundColor: theme === "dark" ? "#374151" : "#f3f4f6",
+            borderRadius: 8,
+            alignItems: "center",
+            justifyContent: "center",
+            marginRight: 12,
+          }}
+        >
           {getGenderIcon(value)}
         </View>
         <View className="flex-1">
-          <Text style={{ color: mutedColor, fontSize: 14, marginBottom: 4 }}>{label}</Text>
+          <Text style={{ color: mutedColor, fontSize: 14, marginBottom: 4 }}>
+            {label}
+          </Text>
           {isEditing ? (
-            <View style={{ backgroundColor: cardColor, borderRadius: 8, borderWidth: 1, borderColor: borderColor, overflow: 'hidden' }}>
+            <View
+              style={{
+                backgroundColor: cardColor,
+                borderRadius: 8,
+                borderWidth: 1,
+                borderColor: borderColor,
+                overflow: "hidden",
+              }}
+            >
               <TouchableOpacity
                 className="flex-row justify-between items-center p-3"
                 onPress={() => handleGenderChange("Male")}
@@ -184,7 +328,9 @@ export const GenderInput = ({ value, label, isEditing, theme, borderColor, muted
               >
                 <View className="flex-row items-center">
                   <Venus size={16} color="#EC4899" className="mr-2" />
-                  <Text style={{ color: textColor, marginLeft: 8 }}>Female</Text>
+                  <Text style={{ color: textColor, marginLeft: 8 }}>
+                    Female
+                  </Text>
                 </View>
                 <View className="w-5 h-5 rounded-full border-2 border-gray-300 items-center justify-center">
                   {selectedGender === "Female" && (
@@ -194,7 +340,7 @@ export const GenderInput = ({ value, label, isEditing, theme, borderColor, muted
               </TouchableOpacity>
             </View>
           ) : (
-            <Text style={{ color: textColor, fontWeight: '500', fontSize: 16 }}>
+            <Text style={{ color: textColor, fontWeight: "500", fontSize: 16 }}>
               {value || "Not provided"}
             </Text>
           )}
@@ -205,23 +351,24 @@ export const GenderInput = ({ value, label, isEditing, theme, borderColor, muted
 };
 
 // Nationality Input Component
-export const NationalityInput: React.FC<NationalityInputProps> = ({ 
-  value, 
-  label, 
-  isEditing, 
-  theme, 
-  borderColor, 
-  mutedColor, 
-  textColor, 
-  cardColor, 
-  nationalityType, 
-  onNationalityTypeChange, 
+export const NationalityInput: React.FC<NationalityInputProps> = ({
+  value,
+  label,
+  isEditing,
+  theme,
+  borderColor,
+  mutedColor,
+  textColor,
+  cardColor,
+  nationalityType,
+  onNationalityTypeChange,
   customNationalityRef,
   foreignerSpecify,
-  onValueChange
+  onValueChange,
 }) => {
-  const [localNationalityType, setLocalNationalityType] = useState(nationalityType);
-  
+  const [localNationalityType, setLocalNationalityType] =
+    useState(nationalityType);
+
   useEffect(() => {
     if (!isEditing) {
       setLocalNationalityType(nationalityType);
@@ -246,10 +393,21 @@ export const NationalityInput: React.FC<NationalityInputProps> = ({
           )}
         </View>
         <View className="flex-1">
-          <Text style={{ color: mutedColor, fontSize: 14, marginBottom: 4 }}>{label}</Text>
+          <Text style={{ color: mutedColor, fontSize: 14, marginBottom: 4 }}>
+            {label}
+          </Text>
           {isEditing ? (
             <View>
-              <View style={{ backgroundColor: cardColor, borderRadius: 8, borderWidth: 1, borderColor: borderColor, overflow: 'hidden', marginBottom: 8 }}>
+              <View
+                style={{
+                  backgroundColor: cardColor,
+                  borderRadius: 8,
+                  borderWidth: 1,
+                  borderColor: borderColor,
+                  overflow: "hidden",
+                  marginBottom: 8,
+                }}
+              >
                 <TouchableOpacity
                   className="flex-row justify-between items-center p-3"
                   onPress={() => handleLocalNationalityTypeChange("Filipino")}
@@ -279,17 +437,17 @@ export const NationalityInput: React.FC<NationalityInputProps> = ({
                   </View>
                 </TouchableOpacity>
               </View>
-              
+
               {localNationalityType === "Foreigner" && (
                 <EditableField
                   icon={Globe}
                   label="Specify Nationality"
                   isEditing={isEditing || false}
-                  theme={theme || 'light'}
-                  borderColor={borderColor || '#e5e7eb'}
-                  mutedColor={mutedColor || '#6b7280'}
-                  textColor={textColor || '#000000'}
-                  value={ foreignerSpecify || "" }
+                  theme={theme || "light"}
+                  borderColor={borderColor || "#e5e7eb"}
+                  mutedColor={mutedColor || "#6b7280"}
+                  textColor={textColor || "#000000"}
+                  value={foreignerSpecify || ""}
                   field="foreigner_specify"
                   inputRef={customNationalityRef}
                   autoCapitalize="words"
@@ -299,7 +457,7 @@ export const NationalityInput: React.FC<NationalityInputProps> = ({
             </View>
           ) : (
             <Text
-              style={{ color: textColor, fontWeight: '500', fontSize: 16 }}
+              style={{ color: textColor, fontWeight: "500", fontSize: 16 }}
               numberOfLines={2}
             >
               {value || "Not provided"}
