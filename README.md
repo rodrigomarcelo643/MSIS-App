@@ -1,4 +1,4 @@
-# MSIS - Medical Student Information System
+# MedSIS - Medical Student Information System
 
 <!-- Version Badges -->
 <div align="center" style="margin-bottom: 30px;">
@@ -14,11 +14,11 @@
   <img src="https://img.shields.io/badge/Context%20API-React-61DAFB?style=for-the-badge&logo=react&logoColor=white" alt="Context API" />
 </div>
 
-
-**MSIS** ( Medical Student Information System ) is a comprehensive mobile application designed for students to upload academic requirements, view evaluation results history, and manage their educational journey. This first version release focuses on streamlined document submission, evaluation tracking, and essential academic tools with AI assistance and real-time communication features.
+**MedSIS** ( Medical Student Information System ) is a comprehensive mobile application designed for students to upload academic requirements, view evaluation results history, and manage their educational journey. This first version release focuses on streamlined document submission, evaluation tracking, and essential academic tools with AI assistance and real-time communication features.
 
 ### 🧠 ML-Powered Image Quality Validation
-MSIS features an intelligent validation pipeline that utilizes a dedicated Machine Learning microservice to guarantee the legibility of academic records.
+
+MedSIS features an intelligent validation pipeline that utilizes a dedicated Machine Learning microservice to guarantee the legibility of academic records.
 
 When a student selects a document (like a general academic requirement or an evaluation grade image), the file is seamlessly routed to the validation endpoint. This microservice computes the image's Laplacian variance to calculate a clarity confidence score. If the system rejects the quality due to blurriness, the upload is blocked and instant UI feedback is provided. If the system accepts the quality, the transaction generates a secure token and commits the document or grade image to storage.
 
@@ -50,7 +50,7 @@ graph TD
 
 ### Streamlined Academic Records and Document Management
 
-**MSIS App v1.0.0** delivers a comprehensive mobile solution designed for students to efficiently manage their academic records and documents. This release focuses on core functionalities including secure document upload, real-time evaluation results tracking with e-signatures, AI-powered academic assistance, and seamless communication with faculty.
+**MedSIS App v1.0.0** delivers a comprehensive mobile solution designed for students to efficiently manage their academic records and documents. This release focuses on core functionalities including secure document upload, real-time evaluation results tracking with e-signatures, AI-powered academic assistance, and seamless communication with faculty.
 
 **Key Highlights:**
 
@@ -66,7 +66,7 @@ graph TD
 ## Project Structure
 
 ```
-MSIS-App/  # Academic Records and Document Management System
+MedSIS-App/  # Academic Records and Document Management System
 ├── app/                          # Main application screens (file-based routing)
 │   ├── (tabs)/                   # Tab-based navigation screens ( Bottom Tabs)
 │   │   ├── _layout.tsx          # Tab layout configuration
@@ -184,6 +184,7 @@ MSIS-App/  # Academic Records and Document Management System
 ### Modular Component Architecture (NEW!)
 
 The codebase has recently undergone a major refactoring to break down monolithic screens into highly modular, reusable, and easy-to-maintain components:
+
 - **components/auth/** - Self-contained components for complex authentication flows (modals, validation inputs).
 - **components/evaluations/** - Sub-components explicitly handling student grade uploads and evaluation displays.
 - **components/folder/** - Reusable requirement list items and modular folder structural components.
@@ -264,6 +265,7 @@ The codebase has recently undergone a major refactoring to break down monolithic
 - 👤 Advanced profile management with live avatar fetching and SWU head fallback
 - 📅 Accurate calendar system with Philippine timezone support
 - 🔔 Smart notifications with feedback separation and time conversion
+
 ### Document Management & Quality Control
 
 - 🖼️ **Image Blur Analysis** - ML-powered quality check before upload

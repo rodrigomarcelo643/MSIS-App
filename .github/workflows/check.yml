@@ -1,0 +1,97 @@
+name: MedSIS Code Quality Check
+
+on:
+  push:
+    branches:
+      - main
+      - master
+  pull_request:
+    branches:
+      - main
+      - master
+  workflow_dispatch:
+
+jobs:
+  lint-and-audit:
+    name: Code Quality & Assets Audit
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Create .env file
+        run: |
+          echo "${{ secrets.ENV_FILE }}" > .env
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Check Unused Variables & Imports (ESLint)
+        run: npm run lint
+
+      - name: Audit Unused Assets
+        run: |
+          python3 -c "
+          import os
+
+          assets_dir = 'assets'
+          src_dirs = ['app', 'components', 'contexts', 'hooks', 'redux', 'services', 'constants']
+          config_files = ['app.json', 'package.json']
+
+          # 1. Get all asset files
+          asset_files = []
+          for root, dirs, files in os.walk(assets_dir):
+              for file in files:
+                  asset_files.append(os.path.join(root, file))
+
+          # 2. Get all source and config files contents
+          src_contents = []
+          for src_dir in src_dirs:
+              if os.path.exists(src_dir):
+                  for root, dirs, files in os.walk(src_dir):
+                      for file in files:
+                          if file.endswith(('.ts', '.tsx', '.js', '.jsx', '.json')):
+                              try:
+                                  with open(os.path.join(root, file), 'r', encoding='utf-8') as f:
+                                      src_contents.append(f.read())
+                              except Exception:
+                                  pass
+
+          for config_file in config_files:
+              if os.path.exists(config_file):
+                  try:
+                      with open(config_file, 'r', encoding='utf-8') as f:
+                          src_contents.append(f.read())
+                  except Exception:
+                      pass
+
+          combined_src = '\n'.join(src_contents)
+
+          # 3. Check for unused assets
+          unused_assets = []
+          for asset_path in asset_files:
+              base_name = os.path.basename(asset_path)
+              rel_path = os.path.relpath(asset_path).replace('\\\\', '/')
+              
+              # Skip system/configuration files
+              if any(sys_name in base_name for sys_name in ['icon', 'splash', 'favicon', 'swu_header']):
+                  continue
+                  
+              if base_name not in combined_src and rel_path not in combined_src:
+                  unused_assets.append(rel_path)
+
+          print('--- Codebase Assets Audit ---')
+          if unused_assets:
+              print('⚠️ Found unused assets that can be deleted to make the app lighter:')
+              for asset in unused_assets:
+                  print(f'  - {asset}')
+          else:
+              print('✅ All assets are actively referenced in the codebase.')
+          print('------------------------------')
+          "

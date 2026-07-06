@@ -3,5 +3,31 @@
     "source.fixAll": "explicit",
     "source.organizeImports": "explicit",
     "source.sortMembers": "explicit"
+  },
+  "search.exclude": {
+    "**/node_modules": true,
+    "**/bower_components": true,
+    "**/.expo": true,
+    "**/android/build": true,
+    "**/ios/build": true,
+    "**/dist": true,
+    "**/.git": true,
+    "**/.env*": true
+  },
+  "files.exclude": {
+    "**/.DS_Store": true,
+    "**/node_modules": true,
+    "**/.expo": true,
+    "**/android/build": true,
+    "**/ios/build": true,
+    "**/dist": true
+  },
+  "files.watcherExclude": {
+    "**/.git/objects/**": true,
+    "**/.git/subtree-cache/**": true,
+    "**/node_modules/*/**": true,
+    "**/android/build/**": true,
+    "**/ios/build/**": true,
+    "**/.expo/**": true
   }
 }
