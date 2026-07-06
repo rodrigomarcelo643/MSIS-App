@@ -1,58 +1,83 @@
+import { Announcement } from "@/@types/screens/announcements";
+import { AnnouncementItem } from "@/components/announcements/AnnouncementItem";
+import {
+  LazyLoader,
+  SkeletonLoader,
+} from "@/components/announcements/AnnouncementLoaders";
+import { EmptyState } from "@/components/announcements/EmptyState";
+import { PriorityDropdown } from "@/components/announcements/PriorityDropdown";
+import { API_BASE_URL } from "@/constants/Config";
 import { useAuth } from "@/contexts/AuthContext";
 import { useThemeColor } from "@/hooks/useThemeColor";
-import { API_BASE_URL } from '@/constants/Config';
-import axios from 'axios';
-import { useRouter } from 'expo-router';
+import {
+  setAnnouncements,
+  setAnnouncementsError,
+  setAnnouncementsLoading,
+} from "@/redux/actions";
+import { useDispatch, useSelector } from "@/redux/store";
+import axios from "axios";
+import { useRouter } from "expo-router";
 import {
   AlertTriangle,
   ArrowUp,
   ChevronDown,
   ChevronLeft,
-  Filter
-} from 'lucide-react-native';
-import React, { useEffect, useRef, useState } from 'react';
-import { Alert, Modal, Platform, RefreshControl, ScrollView, Text, TouchableOpacity, View } from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { Announcement } from '@/@types/screens/announcements';
-import { AnnouncementItem } from '@/components/announcements/AnnouncementItem';
-import { SkeletonLoader, LazyLoader } from '@/components/announcements/AnnouncementLoaders';
-import { PriorityDropdown } from '@/components/announcements/PriorityDropdown';
-import { EmptyState } from '@/components/announcements/EmptyState';
-import { useDispatch, useSelector } from "@/redux/store";
-import { setAnnouncements, setAnnouncementsLoading, setAnnouncementsError } from "@/redux/actions";
+  Filter,
+} from "lucide-react-native";
+import React, { useEffect, useState } from "react";
+import {
+  Alert,
+  Platform,
+  RefreshControl,
+  ScrollView,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 const AnnouncementsScreen: React.FC = () => {
   const { user, logout } = useAuth();
   const insets = useSafeAreaInsets();
 
-  //Theme Changer 
-  const backgroundColor = useThemeColor({}, 'background');
-  const textColor = useThemeColor({}, 'text');
-  const cardColor = useThemeColor({}, 'card');
-  const mutedColor = useThemeColor({}, 'muted');
-  const loadColor = useThemeColor({}, 'loaderCard');
+  //Theme Changer
+  const backgroundColor = useThemeColor({}, "background");
+  const textColor = useThemeColor({}, "text");
+  const cardColor = useThemeColor({}, "card");
+  const mutedColor = useThemeColor({}, "muted");
+  const loadColor = useThemeColor({}, "loaderCard");
 
   // Enhanced navigation detection
   const hasThreeButtonNav = React.useMemo(() => {
-    if (Platform.OS === 'ios') {
+    if (Platform.OS === "ios") {
       return insets.bottom > 20; // iOS home indicator
     }
     return insets.bottom > 0; // Android three-button nav
   }, [insets.bottom]);
 
   const isGestureNav = React.useMemo(() => {
-    return Platform.OS === 'android' && insets.bottom === 0;
+    return Platform.OS === "android" && insets.bottom === 0;
   }, [insets.bottom]);
 
   const router = useRouter();
   const dispatch = useDispatch();
-  const { items: announcements, loading, error } = useSelector(state => state.announcements);
+  const {
+    items: announcements,
+    loading,
+    error,
+  } = useSelector((state) => state.announcements);
 
-  const [filteredAnnouncements, setFilteredAnnouncements] = useState<Announcement[]>([]);
-  const [displayedAnnouncements, setDisplayedAnnouncements] = useState<Announcement[]>([]);
+  const [filteredAnnouncements, setFilteredAnnouncements] = useState<
+    Announcement[]
+  >([]);
+  const [displayedAnnouncements, setDisplayedAnnouncements] = useState<
+    Announcement[]
+  >([]);
   const [refreshing, setRefreshing] = useState(false);
-  const [selectedPriority, setSelectedPriority] = useState<string>('all');
-  const [expandedAnnouncements, setExpandedAnnouncements] = useState<number[]>([]);
+  const [selectedPriority, setSelectedPriority] = useState<string>("all");
+  const [expandedAnnouncements, setExpandedAnnouncements] = useState<number[]>(
+    [],
+  );
   const [showPriorityDropdown, setShowPriorityDropdown] = useState(false);
   const [loadingMore, setLoadingMore] = useState(false);
   const [page, setPage] = useState(1);
@@ -61,16 +86,16 @@ const AnnouncementsScreen: React.FC = () => {
   const itemsPerPage = 10;
 
   const availablePriorities = [
-    { value: 'all', label: 'All Priorities' },
-    { value: 'high', label: 'High Priority' },
-    { value: 'medium', label: 'Medium Priority' },
-    { value: 'low', label: 'Low Priority' }
+    { value: "all", label: "All Priorities" },
+    { value: "high", label: "High Priority" },
+    { value: "medium", label: "Medium Priority" },
+    { value: "low", label: "Low Priority" },
   ];
 
   // Fetch announcements from API using GET request
   const fetchAnnouncements = async () => {
     if (!user) {
-      dispatch(setAnnouncementsError('User not authenticated'));
+      dispatch(setAnnouncementsError("User not authenticated"));
       setRefreshing(false);
       return;
     }
@@ -80,37 +105,56 @@ const AnnouncementsScreen: React.FC = () => {
       dispatch(setAnnouncementsError(null));
 
       // Use GET request with query parameters
-      const response = await axios.get(`${API_BASE_URL}/api/get_student_announcements.php`, {
-        params: {
-          user_id: user.id,
-          year_level: user.year_level_id || 'all'
-        }
-      });
+      const response = await axios.get(
+        `${API_BASE_URL}/api/get_student_announcements.php`,
+        {
+          params: {
+            user_id: user.id,
+            year_level: user.year_level_id || "all",
+          },
+        },
+      );
 
-      console.log('API Response:', response.data);
+      console.log("API Response:", response.data);
 
       if (response.data && response.data.success) {
         dispatch(setAnnouncements(response.data.announcements || []));
       } else {
-        dispatch(setAnnouncementsError(response.data?.message || 'Failed to fetch announcements'));
+        dispatch(
+          setAnnouncementsError(
+            response.data?.message || "Failed to fetch announcements",
+          ),
+        );
       }
     } catch (err: any) {
-      console.error('Error fetching announcements:', err);
+      console.error("Error fetching announcements:", err);
 
       // More specific error handling
       if (err.response?.status === 400) {
-        dispatch(setAnnouncementsError('Invalid request. Please check if the API endpoint is correct.'));
+        dispatch(
+          setAnnouncementsError(
+            "Invalid request. Please check if the API endpoint is correct.",
+          ),
+        );
       } else if (err.response?.status === 401) {
         // Unauthorized, force logout
         Alert.alert(
-          'Session Expired',
-          'Your session has expired. Please log in again.',
-          [{ text: 'OK', onPress: () => logout() }]
+          "Session Expired",
+          "Your session has expired. Please log in again.",
+          [{ text: "OK", onPress: () => logout() }],
         );
-      } else if (err.code === 'NETWORK_ERROR') {
-        dispatch(setAnnouncementsError('Network error. Please check your connection and try again.'));
+      } else if (err.code === "NETWORK_ERROR") {
+        dispatch(
+          setAnnouncementsError(
+            "Network error. Please check your connection and try again.",
+          ),
+        );
       } else {
-        dispatch(setAnnouncementsError(err.message || 'An unexpected error occurred. Please try again.'));
+        dispatch(
+          setAnnouncementsError(
+            err.message || "An unexpected error occurred. Please try again.",
+          ),
+        );
       }
     } finally {
       dispatch(setAnnouncementsLoading(false));
@@ -123,8 +167,8 @@ const AnnouncementsScreen: React.FC = () => {
   useEffect(() => {
     let filtered = [...announcements];
 
-    if (selectedPriority !== 'all') {
-      filtered = filtered.filter(ann => ann.priority === selectedPriority);
+    if (selectedPriority !== "all") {
+      filtered = filtered.filter((ann) => ann.priority === selectedPriority);
     }
 
     setFilteredAnnouncements(filtered);
@@ -152,7 +196,10 @@ const AnnouncementsScreen: React.FC = () => {
 
   // Load more items for lazy loading
   const loadMore = () => {
-    if (displayedAnnouncements.length < filteredAnnouncements.length && !loadingMore) {
+    if (
+      displayedAnnouncements.length < filteredAnnouncements.length &&
+      !loadingMore
+    ) {
       setLoadingMore(true);
       setTimeout(() => {
         setPage(page + 1);
@@ -177,7 +224,10 @@ const AnnouncementsScreen: React.FC = () => {
 
     // Check if we've scrolled to the bottom for lazy loading
     const paddingToBottom = 20;
-    if (layoutMeasurement.height + contentOffset.y >= contentSize.height - paddingToBottom) {
+    if (
+      layoutMeasurement.height + contentOffset.y >=
+      contentSize.height - paddingToBottom
+    ) {
       loadMore();
     }
   };
@@ -185,7 +235,9 @@ const AnnouncementsScreen: React.FC = () => {
   // Toggle announcement expansion
   const toggleExpand = (id: number) => {
     if (expandedAnnouncements.includes(id)) {
-      setExpandedAnnouncements(expandedAnnouncements.filter(item => item !== id));
+      setExpandedAnnouncements(
+        expandedAnnouncements.filter((item) => item !== id),
+      );
     } else {
       setExpandedAnnouncements([...expandedAnnouncements, id]);
     }
@@ -193,17 +245,25 @@ const AnnouncementsScreen: React.FC = () => {
 
   // Get the label for the selected priority
   const getSelectedPriorityLabel = () => {
-    return availablePriorities.find(p => p.value === selectedPriority)?.label || 'All Priorities';
+    return (
+      availablePriorities.find((p) => p.value === selectedPriority)?.label ||
+      "All Priorities"
+    );
   };
 
   if (loading) {
     return (
       <View className="flex-1 bg-gray-50 pt-10" style={{ backgroundColor }}>
-        <View className="flex-row items-center px-4 py-4 bg-white border-b border-gray-200" style={{ backgroundColor: cardColor }}>
+        <View
+          className="flex-row items-center px-4 py-4 bg-white border-b border-gray-200"
+          style={{ backgroundColor: cardColor }}
+        >
           <TouchableOpacity onPress={() => router.back()} className="mr-3">
             <ChevronLeft size={24} color={textColor} />
           </TouchableOpacity>
-          <Text className="text-xl font-bold" style={{ color: textColor }}>Announcements</Text>
+          <Text className="text-xl font-bold" style={{ color: textColor }}>
+            Announcements
+          </Text>
         </View>
         <SkeletonLoader cardColor={cardColor} loadColor={loadColor} />
       </View>
@@ -213,15 +273,22 @@ const AnnouncementsScreen: React.FC = () => {
   if (error) {
     return (
       <View className="flex-1 bg-gray-50 pt-10" style={{ backgroundColor }}>
-        <View className="flex-row items-center px-4 py-4 bg-white border-b border-gray-200" style={{ backgroundColor: cardColor }}>
+        <View
+          className="flex-row items-center px-4 py-4 bg-white border-b border-gray-200"
+          style={{ backgroundColor: cardColor }}
+        >
           <TouchableOpacity onPress={() => router.back()} className="mr-3">
             <ChevronLeft size={24} color={textColor} />
           </TouchableOpacity>
-          <Text className="text-xl font-bold" style={{ color: textColor }}>Announcements</Text>
+          <Text className="text-xl font-bold" style={{ color: textColor }}>
+            Announcements
+          </Text>
         </View>
         <View className="flex-1 justify-center items-center p-5">
           <AlertTriangle size={48} color="#af1616" />
-          <Text className="mt-4 text-center" style={{ color: textColor }}>{error}</Text>
+          <Text className="mt-4 text-center" style={{ color: textColor }}>
+            {error}
+          </Text>
           <TouchableOpacity
             className="mt-4 px-6 py-3 bg-[#af1616] rounded-lg"
             onPress={fetchAnnouncements}
@@ -235,18 +302,26 @@ const AnnouncementsScreen: React.FC = () => {
 
   return (
     <View className="flex-1 bg-gray-50 pt-10" style={{ backgroundColor }}>
-      <View style={{ backgroundColor: cardColor }} className="flex-row items-center px-4 py-4 bg-white border-b border-gray-200">
+      <View
+        style={{ backgroundColor: cardColor }}
+        className="flex-row items-center px-4 py-4 bg-white border-b border-gray-200"
+      >
         <TouchableOpacity onPress={() => router.back()} className="mr-3">
           <ChevronLeft size={24} color={textColor} />
         </TouchableOpacity>
-        <Text className="text-xl font-bold" style={{ color: textColor }} >Announcements</Text>
+        <Text className="text-xl font-bold" style={{ color: textColor }}>
+          Announcements
+        </Text>
         <View className="flex-1"></View>
         <TouchableOpacity
           className="flex-row items-center bg-maroon-100 rounded-full px-4 py-2"
           onPress={() => setShowPriorityDropdown(true)}
         >
           <Filter size={16} color={textColor} />
-          <Text className="mr-1  text-sm font-medium" style={{ color: textColor }}>
+          <Text
+            className="mr-1  text-sm font-medium"
+            style={{ color: textColor }}
+          >
             {getSelectedPriorityLabel()}
           </Text>
           <ChevronDown size={16} color={textColor} />
@@ -272,20 +347,24 @@ const AnnouncementsScreen: React.FC = () => {
         onScroll={handleScroll}
         scrollEventThrottle={16}
         contentContainerStyle={{
-          paddingBottom: hasThreeButtonNav ? insets.bottom + 16 : isGestureNav ? 24 : 16
+          paddingBottom: hasThreeButtonNav
+            ? insets.bottom + 16
+            : isGestureNav
+              ? 24
+              : 16,
         }}
       >
         {displayedAnnouncements.length === 0 ? (
           <EmptyState
             selectedPriority={selectedPriority}
-            onClearFilter={() => setSelectedPriority('all')}
+            onClearFilter={() => setSelectedPriority("all")}
             cardColor={cardColor}
             textColor={textColor}
             mutedColor={mutedColor}
           />
         ) : (
           <View className="p-4">
-            {displayedAnnouncements.map(announcement => (
+            {displayedAnnouncements.map((announcement) => (
               <AnnouncementItem
                 key={announcement.id}
                 announcement={announcement}
@@ -296,16 +375,19 @@ const AnnouncementsScreen: React.FC = () => {
               />
             ))}
 
-            {loadingMore && <LazyLoader cardColor={cardColor} loadColor={loadColor} />}
-
-            {displayedAnnouncements.length < filteredAnnouncements.length && !loadingMore && (
-              <TouchableOpacity
-                className="bg-[#af1616] rounded-lg p-4 items-center mt-4"
-                onPress={loadMore}
-              >
-                <Text className="text-white font-semibold">Load More</Text>
-              </TouchableOpacity>
+            {loadingMore && (
+              <LazyLoader cardColor={cardColor} loadColor={loadColor} />
             )}
+
+            {displayedAnnouncements.length < filteredAnnouncements.length &&
+              !loadingMore && (
+                <TouchableOpacity
+                  className="bg-[#af1616] rounded-lg p-4 items-center mt-4"
+                  onPress={loadMore}
+                >
+                  <Text className="text-white font-semibold">Load More</Text>
+                </TouchableOpacity>
+              )}
           </View>
         )}
       </ScrollView>
