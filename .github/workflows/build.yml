@@ -80,6 +80,30 @@ jobs:
       - name: Prebuild iOS Project
         run: npx expo prebuild --platform ios
 
+      - name: Patch Podfile - Force C++17 for all pod targets
+        run: |
+          python3 - << 'PYEOF'
+          with open('ios/Podfile', 'r') as f:
+              content = f.read()
+
+          patch = """
+          # CI patch: force C++17 to fix fmt/Folly compilation on Xcode 15+
+          post_install do |installer|
+            installer.pods_project.targets.each do |target|
+              target.build_configurations.each do |config|
+                config.build_settings['CLANG_CXX_LANGUAGE_STANDARD'] = 'c++17'
+                config.build_settings['CLANG_CXX_LIBRARY'] = 'libc++'
+              end
+            end
+          end
+          """
+
+          with open('ios/Podfile', 'a') as f:
+              f.write(patch)
+
+          print("Podfile patched successfully")
+          PYEOF
+
       - name: Cache Pods
         uses: actions/cache@v4
         with:
@@ -103,6 +127,7 @@ jobs:
                      -derivedDataPath build \
                      EXCLUDED_ARCHS=x86_64 \
                      ONLY_ACTIVE_ARCH=NO \
+                     OTHER_CPLUSPLUSFLAGS='$(inherited) -std=c++17 -stdlib=libc++' \
                      clean build | xcpretty
 
       - name: Compress iOS App
