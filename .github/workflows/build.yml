@@ -54,16 +54,18 @@ jobs:
       - name: Make Gradle Wrapper Executable
         run: chmod +x android/gradlew
 
-      - name: Build Android Release APK
+      - name: Build Android Release (APK & AAB)
         run: |
           cd android
-          ./gradlew assembleRelease --no-daemon
+          ./gradlew assembleRelease bundleRelease --no-daemon
 
-      - name: Upload Android APK Artifact
+      - name: Upload Android Build Artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: android-apk
-          path: android/app/build/outputs/apk/release/app-release.apk
+          name: android-build-artifacts
+          path: |
+            android/app/build/outputs/apk/release/app-release.apk
+            android/app/build/outputs/bundle/release/app-release.aab
 
   build-ios:
     name: Build iOS (Simulator)
