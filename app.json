@@ -8,7 +8,6 @@
     "scheme": "MedSISapp",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
-    "projectId": "e4d72644-5c96-430c-babd-6066a17d7337",
     "androidStatusBar": {
       "backgroundColor": "#FFFFFF",
       "barStyle": "light-content"
@@ -57,7 +56,10 @@
           "backgroundColor": "#121212"
         }
       },
-      "permissions": ["RECEIVE_BOOT_COMPLETED", "WAKE_LOCK"],
+      "permissions": [
+        "RECEIVE_BOOT_COMPLETED",
+        "WAKE_LOCK"
+      ],
       "package": "com.marcelo12345.medsis",
       "useNextNotificationsApi": true
     },
@@ -69,7 +71,9 @@
         {
           "icon": "./assets/swu_header.jpg",
           "color": "#ffffff",
-          "sounds": ["./assets/sounds/notification_sound.mp3"]
+          "sounds": [
+            "./assets/sounds/notification_sound.mp3"
+          ]
         }
       ]
     ],
@@ -79,12 +83,10 @@
     "extra": {
       "router": {},
       "eas": {
-        "projectId": "e4d72644-5c96-430c-babd-6066a17d7337"
+        "projectId": "9c8a5ef9-b54b-48f4-827d-a543d9ab1515"
       }
     },
     "runtimeVersion": "1.0.0",
-    "updates": {
-      "url": "https://u.expo.dev/e4d72644-5c96-430c-babd-6066a17d7337"
-    }
+    "owner": "marcelo12345"
   }
 }
